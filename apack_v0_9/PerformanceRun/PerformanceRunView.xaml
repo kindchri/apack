@@ -10,12 +10,12 @@
 
     <Grid>
 
-        <Button x:Name="start_collecting_btn" Content="Start" HorizontalAlignment="Left" Margin="55,113,0,0" VerticalAlignment="Top" Width="75" Command="{Binding CollectData}" Height="22"/>
-        <ComboBox x:Name="collection_hours_cbbx" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding RunForHoursList}" SelectedItem="{Binding RunningTime}" Height="22" />
+        <Button x:Name="StartCollectingBtn" Content="Start" HorizontalAlignment="Left" Margin="55,113,0,0" VerticalAlignment="Top" Width="75" Command="{Binding CollectData}" Height="22"/>
+        <ComboBox x:Name="CollectionHoursCbbx" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding RunForHoursList}" SelectedItem="{Binding RunningTime}" Height="22" />
         <Label Content="Hours to collect data" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="120" Height="26"/>
         <TextBox HorizontalAlignment="Left" Height="38" Margin="10,252,0,0" TextWrapping="Wrap" Text="{Binding LastPerfSample}" VerticalAlignment="Top" Width="469"/>
         <Label HorizontalAlignment="Left" Margin="10,221,0,0" VerticalAlignment="Top"  Content="Last sample:" Height="26" Width="75"/>
-        <TextBlock x:Name="statusTextblock" HorizontalAlignment="Left" Height="30" Margin="16,33,0,0" TextWrapping="Wrap" Text="{Binding Status}" VerticalAlignment="Top" Width="149" Grid.Row="1"/>
+        <TextBlock x:Name="StatusTextblock" HorizontalAlignment="Left" Height="30" Margin="16,33,0,0" TextWrapping="Wrap" Text="{Binding Status}" VerticalAlignment="Top" Width="149" Grid.Row="1"/>
         <Label Content="Status:" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" Grid.Row="1" Height="26" Width="45"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="430,59,0,0" TextWrapping="Wrap" Text="{Binding NodeAddress}" VerticalAlignment="Top" Width="120"/>
         <Label Content="Elastic node address:" HorizontalAlignment="Left" Margin="305,56,0,0" VerticalAlignment="Top"/>

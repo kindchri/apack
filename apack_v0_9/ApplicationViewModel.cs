@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows.Input;
 using apack_v0_9.HelperClasses;
-using apack_v0_9.PerformanceRun;
 
 namespace apack_v0_9
 {

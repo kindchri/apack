@@ -11,9 +11,8 @@
         <DataTemplate DataType="{x:Type local:PerformanceRunViewModel}">
             <local:PerformanceRunView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type local:ReportsViewModel}">
-            <local:ReportsView />
-        </DataTemplate>
+        
+       
     </Window.Resources>
 
     <DockPanel>

@@ -15,8 +15,8 @@ namespace apack_v0_9.PerformanceRun
 
         //private string _name;
         //private string _description;
-        private string _lastPerfSample;
-        private bool _running;
+        string _lastPerfSample;
+        bool _running;
         //string _fileName;
         #endregion
 
@@ -34,9 +34,9 @@ namespace apack_v0_9.PerformanceRun
         #region Properties
         public int RunningTime { get; set; }
 
-        public string NodeAddress { get; set; }
+        string NodeAddress { get; set; }
 
-        public string IndexName { get; set; }
+        string IndexName { get; set; }
         
         public string LastPerfSample
         {
@@ -56,11 +56,8 @@ namespace apack_v0_9.PerformanceRun
             }
             set
             {
-                if (_running != value)
-                {
-                    _running = value;
-                    RaisePropertyChanged("Running");
-                }
+                _running = value;
+                RaisePropertyChanged("Running");
             }
         }
 
@@ -71,9 +68,10 @@ namespace apack_v0_9.PerformanceRun
         #endregion
 
         #region Methods
-        private ManagementObjectSearcher GetSearcher(string query)
+
+        static ManagementObjectSearcher GetSearcher(string query)
         {
-            ManagementObjectSearcher mos = new ManagementObjectSearcher("root\\CIMV2", query);
+            var mos = new ManagementObjectSearcher("root\\CIMV2", query);
             return mos;
         }
 
@@ -90,46 +88,41 @@ namespace apack_v0_9.PerformanceRun
             var perfSample = new PerformanceSample();
 
             // Add new WMI queries here
-            objSearcherList.Add(GetSearcher("SELECT PercentProcessorTime, PercentInterruptTime, PercentPrivilegedTime FROM Win32_PerfFormattedData_PerfOS_Processor WHERE Name = \"_Total\""));
+            objSearcherList.Add(GetSearcher("SELECT PercentProcessorTime, PercentInterruptTime, PercentPrivilegedTime FROM Win32_PerfFormattedData_PerfOSS_Processor WHERE Name = \"_Total\""));
             objSearcherList.Add(GetSearcher("SELECT AvgDiskQueueLength FROM  Win32_PerfFormattedData_PerfDisk_PhysicalDisk WHERE Name = \"_Total\""));
 
             for (var i = 0; i < numberOfLoops; i++)
             {
                 NumberOfCurrentSample = i + 1;
-                DateTime currentTime = DateTime.Now;
+                var currentTime = DateTime.Now;
                 perfSample.SampleTime = currentTime;
                 
 
-                foreach (ManagementObjectSearcher searcher in objSearcherList)
+                foreach (var searcher in objSearcherList)
                 {
-                    foreach (ManagementObject obj in searcher.Get())
+                    foreach (var o in searcher.Get())
                     {
-                        foreach (PropertyData prop in obj.Properties)
+                        var obj = (ManagementObject) o;
+                        foreach (var prop in obj.Properties)
                         {
-                            switch (prop.Name)
+                            if (prop.Name == "PercentProcessorTime")
                             {
-                                // Handle WMI query results here
-                                case "PercentProcessorTime":
-                                    perfSample.Cpu = Convert.ToDouble(obj[prop.Name]);
-                                    break;
-
-                                case "AvgDiskQueueLength":
-                                    perfSample.AverageDiskQueueLength = Convert.ToDouble(obj[prop.Name]);
-                                    break;
-
-                                case "PercentInterruptTime":
-                                    perfSample.PercentInterruptTime = Convert.ToDouble(obj[prop.Name]);
-                                    break;
-
-                                case "PercentPrivilegedTime":
-                                    perfSample.PercentPrivilegedTime = Convert.ToDouble(obj[prop.Name]);
-                                    break;
-
-                               
+                                perfSample.Cpu = Convert.ToDouble(obj[prop.Name]);
+                            }
+                            else if (prop.Name == "AvgDiskQueueLength")
+                            {
+                                perfSample.AverageDiskQueueLength = Convert.ToDouble(obj[prop.Name]);
+                            }
+                            else if (prop.Name == "PercentInterruptTime")
+                            {
+                                perfSample.PercentInterruptTime = Convert.ToDouble(obj[prop.Name]);
+                            }
+                            else if (prop.Name == "PercentPrivilegedTime")
+                            {
+                                perfSample.PercentPrivilegedTime = Convert.ToDouble(obj[prop.Name]);
                             }
                         }
-                        
-                    } 
+                    }
                 }
 
                 
@@ -139,22 +132,22 @@ namespace apack_v0_9.PerformanceRun
                     SendToElasticSearch(perfSample, NodeAddress, IndexName);
 
                     // Set console message
-                    LastPerfSample = String.Format("{0} CPU Load: {1} %, AvgDiskQueueLength : '{2}' Sample '{3}' of '{4}' ", currentTime, perfSample.Cpu, perfSample.AverageDiskQueueLength, i, numberOfLoops);
+                    LastPerfSample =
+                        $"{currentTime} CPU Load: {perfSample.Cpu} %, AvgDiskQueueLength : '{perfSample.AverageDiskQueueLength}' Sample '{i}' of '{numberOfLoops}' ";
                 }
 
                 if (cts.IsCancellationRequested)
                 {
                     break;
                 }
-                await Task.Delay(3000);
+                await Task.Delay(3000, cts);
             }
 
             Running = false;
-            return 1;
-            
+            return 1;   
         }
 
-        private void SendToElasticSearch(PerformanceSample sample, string nodeaddress, string indexname)
+        static void SendToElasticSearch(PerformanceSample sample, string nodeaddress, string indexname)
         {
             var node = new Uri(nodeaddress);
             var config = new ConnectionSettings(node);
@@ -166,15 +159,25 @@ namespace apack_v0_9.PerformanceRun
 
         public bool IndexExists(string indexname, string address)
         {
-            var node = new Uri(address);
-            var config = new ConnectionSettings(node);
-            var client = new ElasticClient(config);
+            try
+            {
+                var node = new Uri(address);
+                var config = new ConnectionSettings(node);
+                var client = new ElasticClient(config);
 
-            var request = new IndexExistsRequest(indexname);
-            var result = client.IndexExists(request);
+                var request = new IndexExistsRequest(indexname);
+                var result = client.IndexExists(request);
 
-            return result.Exists;
+                return result.Exists;
+            }
+            catch (UriFormatException)
+            {
+                //Handle format exception
+                return false;
+            }
         }
+
+        
        
         #endregion
     }

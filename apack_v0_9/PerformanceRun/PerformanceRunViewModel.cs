@@ -3,6 +3,7 @@ using System.Threading;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows;
+using System.Xml.Linq;
 using apack_v0_9.HelperClasses;
 using apack_v0_9.PerformanceRun;
 
@@ -12,7 +13,7 @@ namespace apack_v0_9
     public class PerformanceRunViewModel : ObservableObject, IPageViewModel
     {
         #region Members
-        PerformanceRunModel _dataCollection;
+
         string _indexName;
         string _nodeAddress;
 
@@ -27,33 +28,24 @@ namespace apack_v0_9
             RunForHoursList = new List<int> { 4, 12, 24 };
             DataCollection = new PerformanceRunModel(NodeAddress, IndexName, RunForHoursList[0]);
             DataCollection.PropertyChanged += _run_PropertyChanged;
+            SetDefaults();
             NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress);
         }
         #endregion
 
         #region Properties
 
-        public string Name
-        {
-            get { return "Performance Collector"; }
-        }
-        
-        public PerformanceRunModel DataCollection
-        {
-            get { return _dataCollection; }
-            set { _dataCollection = value; }
-        }
+        public string Name => "Performance Collector";
+
+        public PerformanceRunModel DataCollection { get; set; }
 
         public int RunningTime
         {
             get { return DataCollection.RunningTime; }
             set 
             {
-                if (DataCollection.RunningTime != value)
-                {
-                    DataCollection.RunningTime = value;
-                    RaisePropertyChanged("RunningTime");
-                }
+                DataCollection.RunningTime = value;
+                RaisePropertyChanged("RunningTime");
             }
         }
 
@@ -62,11 +54,8 @@ namespace apack_v0_9
             get { return DataCollection.LastPerfSample; }
             set
             {
-                if (DataCollection.LastPerfSample != value)
-                {
-                    DataCollection.LastPerfSample = value;
-                    RaisePropertyChanged("LastPerfSample");
-                }
+                DataCollection.LastPerfSample = value;
+                RaisePropertyChanged("LastPerfSample"); 
             }
         }
 
@@ -82,13 +71,9 @@ namespace apack_v0_9
             }
             set
             {
-                if (_indexName != value)
-                {
-                    _indexName = value;
-                    NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress);
-                    RaisePropertyChanged(string.Empty);
-                }
-                
+                _indexName = value;
+                NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress);
+                RaisePropertyChanged(string.Empty);
             } 
         }
 
@@ -99,32 +84,19 @@ namespace apack_v0_9
             }
             set
             {
-                if (_nodeAddress != value)
-                {
-                    _nodeAddress = value;
-                    NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress);
-                    RaisePropertyChanged(string.Empty);
-                }
+                if (_nodeAddress == value) return;
+
+                _nodeAddress = value;
+                NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress);
+                RaisePropertyChanged(string.Empty);
             }
             
             }
 
         bool NodeAccess { get; set; }
 
-        public string NodeAccessMessage
-        {
-            get
-            {
-                if (NodeAccess)
-                {
-                    return "Node accessible.";
-                }
-                else
-                {
-                    return "Node not accessible";
-                }
-            }
-        }
+        public string NodeAccessMessage => NodeAccess ? "Node accessible." : "Node not accessible";
+
         #endregion
 
         #region Methods
@@ -132,6 +104,15 @@ namespace apack_v0_9
         {
             RaisePropertyChanged(string.Empty);
         }
+
+        void SetDefaults()
+        {
+            var settingsXml = XElement.Load(@"Resources\UserSettings.xml");
+            NodeAddress = settingsXml.Element("DefaultNodeAddress").Value;
+            IndexName = settingsXml.Element("DefaultIndex").Value;
+            MessageBox.Show(NodeAddress + " " + IndexName);
+        }
+
         #endregion
 
         #region Commands
@@ -145,18 +126,7 @@ namespace apack_v0_9
 
         bool CanCollectDataExecute()
         {
-            if (DataCollection.Running)
-            {
-                return false;
-            }
-            else if (!NodeAccess)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !DataCollection.Running && NodeAccess;
         }
 
         public ICommand CollectData
@@ -189,23 +159,14 @@ namespace apack_v0_9
         // Command for cancelling the current collection 
         void CancelExecute()
         {
-            if (_cts != null)
-            {
-                MessageBox.Show("Trying to cancel");
-                _cts.Cancel();
-            }
+            if (_cts == null) return;
+            MessageBox.Show("Trying to cancel");
+            _cts.Cancel();
         }
 
         bool CanCancelExecute()
         {
-            if (DataCollection.Running)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return DataCollection.Running;
         }
 
         public ICommand Cancel

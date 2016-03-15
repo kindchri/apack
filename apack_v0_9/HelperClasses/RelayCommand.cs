@@ -39,30 +39,30 @@ namespace apack_v0_9.HelperClasses
             add
             {
                 CommandManager.RequerySuggested += value;
-                this.CanExecuteChangedInternal += value;
+                CanExecuteChangedInternal += value;
             }
 
             remove
             {
                 CommandManager.RequerySuggested -= value;
-                this.CanExecuteChangedInternal -= value;
+                CanExecuteChangedInternal -= value;
             }
         }
 
         [DebuggerStepThrough]
         public bool CanExecute(object parameter)
         {
-            return this._canExecute != null && this._canExecute(parameter);
+            return _canExecute != null && _canExecute(parameter);
         }
 
         public void Execute(object parameter)
         {
-            this._execute(parameter);
+            _execute(parameter);
         }
 
         public void OnCanExecuteChanged()
         {
-            EventHandler handler = this.CanExecuteChangedInternal;
+            EventHandler handler = CanExecuteChangedInternal;
             handler?.Invoke(this, EventArgs.Empty);
         }
         #endregion

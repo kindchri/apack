@@ -19,17 +19,17 @@ namespace apack_v0_9
 
         public ReportsModel() 
         {
-            this._rawData = new Dictionary<DateTime, List<double>>();
-            this._dividedDataDict = new Dictionary<string, Dictionary<DateTime, double>>();
+            _rawData = new Dictionary<DateTime, List<double>>();
+            _dividedDataDict = new Dictionary<string, Dictionary<DateTime, double>>();
         }
 
         public ReportsModel(Dictionary<DateTime, List<double>> data, List<string> counterorder)
         {
-            this._rawData = data;
-            this._counterNamesAndOrder = counterorder;
-            this.DividedDataDict = new Dictionary<string, Dictionary<DateTime, double>>();
-            this._machineName = "Test machine";
-            this._reportDescription = @"Habitasse vehicula nibh inceptos a bibendum porttitor luctus molestie, porttitor amet imperdiet justo magna quis eu tristique, taciti lectus vivamus lacinia nibh tellus eros at sodales tempus at primis mattis leo velit.";
+            _rawData = data;
+            _counterNamesAndOrder = counterorder;
+            DividedDataDict = new Dictionary<string, Dictionary<DateTime, double>>();
+            _machineName = "Test machine";
+            _reportDescription = @"Habitasse vehicula nibh inceptos a bibendum porttitor luctus molestie, porttitor amet imperdiet justo magna quis eu tristique, taciti lectus vivamus lacinia nibh tellus eros at sodales tempus at primis mattis leo velit.";
             DivideData();
             CalculateAverages();
         }
@@ -55,9 +55,9 @@ namespace apack_v0_9
             }
             set
             {
-                if (this._rawData != value)
+                if (_rawData != value)
                 {
-                    this._rawData = value;
+                    _rawData = value;
                     RaisePropertyChanged("RawData");
                     DivideData();
                 }
@@ -82,11 +82,11 @@ namespace apack_v0_9
         {
             get
             {
-                return this._counterNamesAndOrder;
+                return _counterNamesAndOrder;
             }
             set
             {
-                this._counterNamesAndOrder = value;
+                _counterNamesAndOrder = value;
             }
         }
 
@@ -94,48 +94,48 @@ namespace apack_v0_9
         {
             get
             {
-                    return this._dividedDataDict;
+                    return _dividedDataDict;
             }
             set
             {
-                this._dividedDataDict = value;
+                _dividedDataDict = value;
             }
         }
 
         public string ReportDescription
         {
-            get { return this._reportDescription; }
+            get { return _reportDescription; }
             set 
             {
 
-                this._reportDescription = value.Replace(Environment.NewLine, String.Empty).Replace("  ", String.Empty).Replace("    ",String.Empty); 
+                _reportDescription = value.Replace(Environment.NewLine, String.Empty).Replace("  ", String.Empty).Replace("    ",String.Empty); 
             }
         }
 
         public string MachineName
         {
-            get { return this._machineName; }
-            set { this._machineName = value; }
+            get { return _machineName; }
+            set { _machineName = value; }
         }
 
         public Dictionary<string, double> AverageValuesList
         {
             get 
             {
-                if (this.DividedDataDict.Count != 0)
+                if (DividedDataDict.Count != 0)
                 {
                     CalculateAverages();
                 }
 
-                return this._averageValuesList;
+                return _averageValuesList;
             }
 
-            set { this._averageValuesList = value; }
+            set { _averageValuesList = value; }
         }
 
         public int NumberOfSamples
         {
-            get { return this.RawData.Count; }
+            get { return RawData.Count; }
         }
         #endregion
 
@@ -143,18 +143,18 @@ namespace apack_v0_9
         private void DivideData() 
         {
             //Clear the property if it has items
-            if (this.DividedDataDict.Count != 0)
+            if (DividedDataDict.Count != 0)
             {
-                this.DividedDataDict.Clear();
+                DividedDataDict.Clear();
             }
 
             // Make sure that the CounterOrder property has items
-            if (this.CounterNamesAndOrder != null && this.CounterNamesAndOrder.Count != 0)
+            if (CounterNamesAndOrder != null && CounterNamesAndOrder.Count != 0)
             {
-                for (int k = 1; k < this.CounterNamesAndOrder.Count; k++)
+                for (int k = 1; k < CounterNamesAndOrder.Count; k++)
                 {
                     Dictionary<DateTime, double> dict = new Dictionary<DateTime, double>();
-                    this.DividedDataDict.Add(this.CounterNamesAndOrder[k], dict);
+                    DividedDataDict.Add(CounterNamesAndOrder[k], dict);
                 }
             }
             else
@@ -162,15 +162,15 @@ namespace apack_v0_9
                 throw new InvalidDataException();
             }
 
-            for (int i = 0; i < this.CounterNamesAndOrder.Count - 1; i++)
+            for (int i = 0; i < CounterNamesAndOrder.Count - 1; i++)
             {
-                for (int j = 0; j < this.RawData.Count; j++)
+                for (int j = 0; j < RawData.Count; j++)
                 {
 
-                    DateTime date = this.RawData.ElementAt(j).Key;
-                    double value = this.RawData.ElementAt(j).Value[i];
+                    DateTime date = RawData.ElementAt(j).Key;
+                    double value = RawData.ElementAt(j).Value[i];
 
-                    this.DividedDataDict.ElementAt(i).Value.Add(date, value);
+                    DividedDataDict.ElementAt(i).Value.Add(date, value);
                 }
             }
         }
@@ -187,7 +187,7 @@ namespace apack_v0_9
                 sampleNumberOf = 0;
                 sampleSum = 0;
                 sampleAverage = 0;
-                Dictionary<DateTime, double> tempDict = this.DividedDataDict[str];
+                Dictionary<DateTime, double> tempDict = DividedDataDict[str];
                 foreach (double sample in tempDict.Values)
                 {
                     sampleSum += sample;
@@ -197,12 +197,12 @@ namespace apack_v0_9
                 averagesList.Add(str, sampleAverage);
             }
 
-            this.AverageValuesList = averagesList;
+            AverageValuesList = averagesList;
         }
 
         public void SaveCharts()
         {
-            foreach(KeyValuePair<string, Dictionary<DateTime, double>> counter in this.DividedDataDict)
+            foreach(KeyValuePair<string, Dictionary<DateTime, double>> counter in DividedDataDict)
             {
                 CreateChart(counter.Key, counter.Value);
             }
@@ -249,9 +249,9 @@ namespace apack_v0_9
             string rootPath = @"C:\\Users\\" + Environment.UserName + @"\Documents\output\";
             FileStream fs = new FileStream(rootPath+ @"\Example_Report1.pdf", FileMode.Create, FileAccess.Write, FileShare.None);
 
-            iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(iTextSharp.text.PageSize.A4);
+            iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(PageSize.A4);
 
-            Document doc = new Document(iTextSharp.text.PageSize.A4, 36, 72, 108, 180);
+            Document doc = new Document(PageSize.A4, 36, 72, 108, 180);
 
             PdfWriter writer = PdfWriter.GetInstance(doc, fs);
 
@@ -271,8 +271,8 @@ namespace apack_v0_9
             
 
             doc.Add(new Paragraph("APACK Report", title));
-            doc.Add(new Paragraph("Machine tested: " + this.MachineName, heading1));
-            doc.Add(new Paragraph("Description: " + this.ReportDescription, normal));
+            doc.Add(new Paragraph("Machine tested: " + MachineName, heading1));
+            doc.Add(new Paragraph("Description: " + ReportDescription, normal));
 
             doc.Add(new Paragraph());
 
@@ -287,7 +287,7 @@ namespace apack_v0_9
             doc.Add(disk_image);
 
             doc.Add(new Paragraph("Averages: ", heading1));
-            foreach (KeyValuePair<string, double> pair in this.AverageValuesList)  //senaste nullreferenceexception
+            foreach (KeyValuePair<string, double> pair in AverageValuesList)  //senaste nullreferenceexception
             {
 
                 doc.Add(new Paragraph(pair.Key + " : " + pair.Value));
@@ -305,14 +305,14 @@ namespace apack_v0_9
             Dictionary<DateTime, List<double>> perf_log = new Dictionary<DateTime, List<double>>();
 
             // Read all lines from the file
-            string[] lines = File.ReadAllLines(this.PerfLogFilePath);
+            string[] lines = File.ReadAllLines(PerfLogFilePath);
 
             // Read each line into the dictionary
             for ( int i = 0; i < lines.Length; i++)
             {
                 if (i == 0)
                 {
-                    this.CounterNamesAndOrder = lines[i].Split(',').ToList<string>();
+                    CounterNamesAndOrder = lines[i].Split(',').ToList<string>();
                 }
                 else
                 {
@@ -330,7 +330,7 @@ namespace apack_v0_9
                
             }
 
-            this.RawData = perf_log;
+            RawData = perf_log;
         }
 
         #endregion

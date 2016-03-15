@@ -16,7 +16,7 @@ namespace apack_v0_9
             get { return _report; }
             set
             {
-                this._report = value;
+                _report = value;
                 RaisePropertyChanged("ReportsModel");
             }
         }
@@ -30,10 +30,10 @@ namespace apack_v0_9
 
             if (result == true)
             {
-                this.Report.PerfLogFilePath = dlg.FileName;
+                Report.PerfLogFilePath = dlg.FileName;
             }
 
-            this.Report.ReadFromFile();
+            Report.ReadFromFile();
 
             //_performanceRunResult = new ReportsModel(this.Run.PerfData, new List<string> { "cpu", "disk" });
             MessageBox.Show(Report.NumberOfSamples + " samples read.");
