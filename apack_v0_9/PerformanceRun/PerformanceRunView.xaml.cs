@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace apack_v0_9
+namespace apack
 {
     /// <summary>
     /// Interaction logic for PerformanceRunView.xaml

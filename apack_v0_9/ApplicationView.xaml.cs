@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 
 
-namespace apack_v0_9
+namespace apack
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

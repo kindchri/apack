@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System.Diagnostics;
 
-namespace apack_v0_9.HelperClasses
+namespace apack.HelperClasses
 {
     public class RelayCommand : ICommand
     {

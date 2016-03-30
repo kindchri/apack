@@ -1,6 +1,6 @@
-﻿using apack_v0_9.HelperClasses;
+﻿using apack.HelperClasses;
 
-namespace apack_v0_9
+namespace apack
 {
     public class HomeViewModel : ObservableObject, IPageViewModel
     {

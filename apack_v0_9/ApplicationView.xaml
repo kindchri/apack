@@ -1,7 +1,7 @@
-﻿<Window x:Class="apack_v0_9.ApplicationView"
+﻿<Window x:Class="apack.ApplicationView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:apack_v0_9"
+        xmlns:local="clr-namespace:apack"
         Title="AXIS APACK" Height="374" Width="800" ResizeMode="NoResize">
     
     <Window.Resources>
@@ -10,6 +10,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type local:PerformanceRunViewModel}">
             <local:PerformanceRunView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:ElasticManagementViewModel}">
+            <local:ElasticManagementView/>
         </DataTemplate>
         
        

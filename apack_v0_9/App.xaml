@@ -1,4 +1,4 @@
-﻿<Application x:Class="apack_v0_9.App"
+﻿<Application x:Class="apack.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>

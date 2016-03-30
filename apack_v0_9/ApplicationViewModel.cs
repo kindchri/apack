@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using apack_v0_9.HelperClasses;
+using apack.HelperClasses;
 
-namespace apack_v0_9
+namespace apack
 {
     public class ApplicationViewModel : ObservableObject
     {
@@ -17,7 +17,7 @@ namespace apack_v0_9
         {
             PageViewModels.Add(new HomeViewModel());
             PageViewModels.Add(new PerformanceRunViewModel());
-            //PageViewModels.Add(new ReportsViewModel());
+            PageViewModels.Add(new ElasticManagementViewModel());
             CurrentPageViewModel = PageViewModels[0];
         }
 

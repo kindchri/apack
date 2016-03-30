@@ -7,8 +7,8 @@
     <ProjectGuid>{42719142-06E3-4E9A-8AC9-FAE65F40824A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>apack_v0_9</RootNamespace>
-    <AssemblyName>apack_v0_9</AssemblyName>
+    <RootNamespace>apack</RootNamespace>
+    <AssemblyName>apack</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -110,10 +110,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="HelperClasses\ElasticServer.cs" />
     <Compile Include="ElasticManagement\ElasticManagementView.xaml.cs">
       <DependentUpon>ElasticManagementView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ElasticManagement\ElasticManagementViewModel.cs" />
+    <Compile Include="HelperClasses\ElasticmanagementFactory.cs" />
     <Compile Include="Home\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
@@ -123,7 +125,7 @@
       <DependentUpon>PerformanceRunView.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelperClasses\ObservableObject.cs" />
-    <Compile Include="PerformanceRun\PerformanceSample.cs" />
+    <Compile Include="HelperClasses\PerformanceSample.cs" />
     <Page Include="ElasticManagement\ElasticManagementView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
