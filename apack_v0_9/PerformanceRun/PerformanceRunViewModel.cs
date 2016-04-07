@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Xml.Linq;
 using apack.HelperClasses;
 using apack.PerformanceRun;
+using ServiceStack.Html;
 
 
 namespace apack
@@ -13,10 +15,6 @@ namespace apack
     public class PerformanceRunViewModel : ObservableObject, IPageViewModel
     {
         #region Members
-
-        string _indexName;
-        string _nodeAddress;
-        bool _nodeAccess;
         int _collectionTask;
         CancellationTokenSource _cts;
 
@@ -26,20 +24,15 @@ namespace apack
 
         public PerformanceRunViewModel()
         {
-            RunForHoursList = new List<int> { 4, 12, 24 };
-            //DataCollection = new PerformanceRunModel();
+            RunForHoursList = new List<int> { 4, 12, 24, 9999 };
             PerformanceRunModel.Instance.PropertyChanged += _run_PropertyChanged;
-            SetDefaultSettings();
-            CheckIndexExists();
-            //NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress).Result;
+            
         }
         #endregion
 
         #region Properties
 
         public string Name => "Performance Collector";
-
-        //public PerformanceRunModel DataCollection { get; set; }
 
         public int RunningTime
         {
@@ -63,54 +56,13 @@ namespace apack
 
         public List<int> RunForHoursList { get; }
 
-        public string Status => PerformanceRunModel.Instance.Running ? "Test running" : "Test not running";
+        public string Status { get; set; }
 
-        public string IndexName 
-        {
-            get
-            {
-                return _indexName = _indexName ?? "performance";
-            }
-            set
-            {
-                _indexName = value;
-                CheckIndexExists();
-                //NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress).Result;
-                RaisePropertyChanged(string.Empty);
-            } 
-        }
+        public string IndexName => ElasticServer.Instance.IndexName;
 
-        public string NodeAddress {
-            get
-            {
-                return _nodeAddress = _nodeAddress ?? "http://localhost:9200";
-            }
-            set
-            {
-                if (_nodeAddress == value) return;
+        public string NodeAddress => ElasticServer.Instance.NodeAddress;
 
-                _nodeAddress = value;
-                CheckIndexExists();
-                //NodeAccess = DataCollection.IndexExists(IndexName, NodeAddress).Result;
-                RaisePropertyChanged(string.Empty);
-            }
-            
-            }
-
-        bool NodeAccess
-        {
-            get
-            {
-                return _nodeAccess;
-            }
-            set
-            {
-                _nodeAccess = value;
-                RaisePropertyChanged(string.Empty);
-            }
-        }
-
-        public string NodeAccessMessage => NodeAccess ? "Node accessible." : "Node not accessible";
+       
 
         #endregion
 
@@ -120,23 +72,7 @@ namespace apack
             RaisePropertyChanged(string.Empty);
         }
 
-        void SetDefaultSettings()
-        {
-            var settingsXml = XElement.Load(@"Resources\UserSettings.xml");
-
-            var xElementDefaultNodeAddress = settingsXml.Element("DefaultNodeAddress");
-            if (xElementDefaultNodeAddress != null)
-                NodeAddress = xElementDefaultNodeAddress.Value;
-
-            var xElementDefaultIndex = settingsXml.Element("DefaultIndex");
-            if (xElementDefaultIndex != null)
-                IndexName = xElementDefaultIndex.Value;
-        }
-
-        async void CheckIndexExists()
-        {
-            NodeAccess = await PerformanceRunModel.Instance.IndexExists(IndexName, NodeAddress);
-        }
+        
 
         #endregion
 
@@ -145,18 +81,33 @@ namespace apack
         // Command for running the collector
         async void CollectDataExecute()
         {
-            _cts = new CancellationTokenSource();
-            
-            PerformanceRunModel.Instance.IndexName = IndexName;
-            PerformanceRunModel.Instance.NodeAddress = NodeAddress;
-            PerformanceRunModel.Instance.RunningTime = RunningTime;
+            try
+            {
+                _cts = new CancellationTokenSource();
 
-            _collectionTask = await PerformanceRunModel.Instance.Run(_cts.Token);
+                //PerformanceRunModel.Instance.IndexName = IndexName;
+                //PerformanceRunModel.Instance.NodeAddress = NodeAddress;
+                PerformanceRunModel.Instance.RunningTime = RunningTime;
+                Status = "Collecting data";
+                _collectionTask = await PerformanceRunModel.Instance.Run(_cts.Token);
+                Status = "Finished collecting data";
+            }
+            catch (OperationCanceledException)
+            {
+                TestCancelled();
+            }
+        }
+
+        void TestCancelled()
+        {
+            Status = "The test was cancelled";
+            LastPerfSample = string.Empty;
+            RaisePropertyChanged(string.Empty);
         }
 
         bool CanCollectDataExecute()
         {
-            return !PerformanceRunModel.Instance.Running && NodeAccess;
+            return !PerformanceRunModel.Instance.Running;
         }
 
         public ICommand CollectData
@@ -167,31 +118,13 @@ namespace apack
             }
         }
 
-        // Command for testing hte connection to the node and index
-        async void TestConnectionExecute()
-        {
-           await PerformanceRunModel.Instance.IndexExists(IndexName, NodeAddress);
-        }
-
-        bool CanTestConnectionExecute()
-        {
-            return true;
-        }
-
-        public ICommand TestConnection
-        {
-            get
-            {
-                return new RelayCommand(param => TestConnectionExecute(), param => CanTestConnectionExecute());
-            }
-        }
-
         // Command for cancelling the current collection 
         void CancelExecute()
         {
             if (_cts == null) return;
             MessageBox.Show("Trying to cancel");
             _cts.Cancel();
+            
         }
 
         bool CanCancelExecute()

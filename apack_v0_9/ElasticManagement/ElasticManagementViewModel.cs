@@ -33,6 +33,10 @@ namespace apack
        
         public string CreateNewIndexName { get; set; }
 
+        public List<string> IndexList { get; set; } 
+
+        public string ChosenIndex { get; set; }
+
         #endregion
 
         #region Methods
@@ -54,30 +58,32 @@ namespace apack
         #region Commands
 
         // Create index methods and property
-        void CreateIndexExecute()
+        async void CreateIndexExecute()
         {
-            
+            var result = await ElasticServer.Instance.CreateIndexAsync(IndexName);
+            UpdateIndexListBoxExecute();
+            MessageBox.Show(result ? "Index created!" : "Something went wrong");
         }
 
-        bool CanCreateIndex()
+        bool CanCreateIndexExecute()
         {
-            return true;
+            return ElasticServer.Instance.IsClientSet;
         }
 
         public ICommand CreateIndex
         {
             get
             {
-                return new RelayCommand(param => CreateIndexExecute(), param => CanCreateIndex());
+                return new RelayCommand(param => CreateIndexExecute(), param => CanCreateIndexExecute());
             }
         }
 
         // Set client command methods and property
         async void SetClientExecute()
         {
-            bool result = await ElasticServer._instance.SetElasticServerClientAsync(NodeAddress);
-
-            MessageBox.Show(result ? "Success" : "Fail");
+            bool result = await ElasticServer.Instance.SetElasticServerClientAsync(NodeAddress);
+            if (result) UpdateIndexListBoxExecute();
+            if(!result) { MessageBox.Show("Node was not set, check the address and try pinging your node.");}
 
         }
 
@@ -94,6 +100,54 @@ namespace apack
             }
         }
 
+        void UpdateIndexListBoxExecute()
+        {
+            IndexList = ElasticServer.Instance.GetAllIndices();
+            RaisePropertyChanged("");
+        }
+
+        bool CanUpdateIndexListBoxExecute()
+        {
+            return ElasticServer.Instance.IsClientSet;
+        }
+
+        public ICommand UpdateIndexListBox
+        {
+            get
+            {
+                return new RelayCommand(param => UpdateIndexListBoxExecute(), param => CanUpdateIndexListBoxExecute());
+            }
+        }
+
+        async void SetIndexExecute()
+        {
+            var result = false;
+
+            if (NodeAddress != null && ChosenIndex != null)
+            {
+                result = await ElasticServer.Instance.SetElasticServerClientAsync(NodeAddress, ChosenIndex);
+            }
+
+            MessageBox.Show(result
+                ? $"Node: {ElasticServer.Instance.NodeAddress}, Index: {ElasticServer.Instance.IndexName}"
+                : "Something went wrong, node and index not set");
+        }
+
+    
+        
+
+        bool CanSetIndexExecute()
+        {
+            return ElasticServer.Instance.IsClientSet;
+        }
+
+        public ICommand SetIndex
+        {
+            get
+            {
+                return new RelayCommand(param => SetIndexExecute(), param => CanSetIndexExecute());
+            }
+        }
         #endregion
     }
 }

@@ -80,5 +80,13 @@ namespace apack.HelperClasses
 
 
         #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return $"Performance sample at {SampleTime}";
+        }
+        #endregion
     }
 }

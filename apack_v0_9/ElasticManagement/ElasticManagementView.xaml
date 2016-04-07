@@ -6,12 +6,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600">
     <Grid>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,54,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="label" Content="Create new index&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top" Height="26"/>
-        <Button x:Name="button" Content="Create" HorizontalAlignment="Left" Margin="55,82,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="191,54,0,0" TextWrapping="Wrap" Text="{Binding NodeAddress}" VerticalAlignment="Top" Width="233"/>
-        <Button x:Name="button1" Content="Set" HorizontalAlignment="Left" Margin="236,82,0,0" VerticalAlignment="Top" Width="75"/>
-        <Label x:Name="label1" Content="Set node" HorizontalAlignment="Left" Margin="191,28,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="179,231,0,0" TextWrapping="Wrap" Text="{Binding IndexName}" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="label" Content="Create new index&#xD;&#xA;" HorizontalAlignment="Left" Margin="179,205,0,0" VerticalAlignment="Top" Height="26"/>
+        <Button x:Name="button" Content="Create" HorizontalAlignment="Left" Margin="224,254,0,0" VerticalAlignment="Top" Width="75" Command="{Binding CreateIndex}"/>
+        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="304,51,0,0" TextWrapping="Wrap" Text="{Binding NodeAddress}" VerticalAlignment="Top" Width="233"/>
+        <Button x:Name="button1" Content="Set node" HorizontalAlignment="Left" Margin="462,74,0,0" VerticalAlignment="Top" Width="75" Command="{Binding SetClient}"/>
+        <Label x:Name="label1" Content="Set node" HorizontalAlignment="Left" Margin="304,25,0,0" VerticalAlignment="Top"/>
+        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="115" Margin="304,139,0,0" VerticalAlignment="Top" Width="233" ItemsSource="{Binding IndexList}" SelectedItem="{Binding ChosenIndex}"/>
+        <Label x:Name="label2" Content="Set index" HorizontalAlignment="Left" Margin="304,113,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="button2" Content="Update list " HorizontalAlignment="Left" Margin="304,254,0,0" VerticalAlignment="Top" Width="72" Command="{Binding UpdateIndexListBox}"/>
+        <Button x:Name="button3" Content="Set index" HorizontalAlignment="Left" Margin="478,254,0,0" VerticalAlignment="Top" Width="59" Command="{Binding SetIndex}"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="38,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="146" Width="129"><Run Text="First connect to an elasticsearch node and then select an index on that node. Then you can collect data to that index. Make sure to "/><Run Text="only use your own index."/></TextBlock>
+        <Label x:Name="label3" Content="{Binding ChosenIndex}" HorizontalAlignment="Left" Margin="51,205,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </UserControl>

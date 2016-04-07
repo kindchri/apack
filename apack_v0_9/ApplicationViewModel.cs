@@ -15,9 +15,10 @@ namespace apack
 
         public ApplicationViewModel()
         {
-            PageViewModels.Add(new HomeViewModel());
-            PageViewModels.Add(new PerformanceRunViewModel());
+            //PageViewModels.Add(new HomeViewModel());
             PageViewModels.Add(new ElasticManagementViewModel());
+            PageViewModels.Add(new PerformanceRunViewModel());
+            
             CurrentPageViewModel = PageViewModels[0];
         }
 
@@ -30,8 +31,8 @@ namespace apack
                     if (_changePageCommand == null)
                     {
                         _changePageCommand = new RelayCommand(
-                        p => ChangeViewModel((IPageViewModel)p),
-                        p => p is IPageViewModel);
+                        param => ChangeViewModel((IPageViewModel)param),
+                        param => CanChangeViewModel((IPageViewModel)param));
                             
                     }
                 }
@@ -66,7 +67,7 @@ namespace apack
         }
 
         #region Methods
-        private void ChangeViewModel(IPageViewModel viewModel)
+        void ChangeViewModel(IPageViewModel viewModel)
         {
             if (!PageViewModels.Contains(viewModel))
                 PageViewModels.Add(viewModel);
@@ -74,6 +75,14 @@ namespace apack
             CurrentPageViewModel = PageViewModels.FirstOrDefault(vm => vm == viewModel);
         }
 
+        bool CanChangeViewModel(IPageViewModel viewModel)
+        {
+            if (viewModel.Name == "Performance Collector")
+            {
+                return ElasticServer.Instance.IsClientSet;
+            }
+            return true;
+        }
 
         #endregion
 

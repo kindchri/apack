@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <UserSettings>
-  <DefaultNodeAddress>http://172.25.187.51:9200</DefaultNodeAddress>
-  <DefaultIndex>perfindex1</DefaultIndex>
+  <DefaultNodeAddress>http://172.25.187.28:9200</DefaultNodeAddress>
+  <DefaultIndex>default</DefaultIndex>
 </UserSettings>

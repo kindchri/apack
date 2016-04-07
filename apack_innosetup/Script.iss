@@ -16,9 +16,9 @@
 AppName=AXIS Performance Analysis Collection Kit
 AppVersion=1.0
 AppVerName=APACK version {#MyAppVer}
-DefaultDirName={pf}\apack_innosetup
-DefaultGroupName=apack_innosetup
-UninstallDisplayIcon={app}\apack_innosetup.exe
+DefaultDirName={pf}\apack
+DefaultGroupName=apack
+UninstallDisplayIcon={app}\apack.exe
 Compression=lzma2
 SolidCompression=yes
 OutputDir=Output
@@ -35,5 +35,5 @@ Source: "apack.exe.config"; DestDir: "{app}"
 Source: "apack.pdb"; DestDir: "{app}"
 
 [Icons]
-Name: "{group}\apack_innosetup"; Filename: "{app}\apack_innosetup.exe"
+Name: "{group}\apack"; Filename: "{app}\apack.exe"
 
